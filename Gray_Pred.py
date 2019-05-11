@@ -69,7 +69,7 @@ class GrayForecast():
 
                 if if_ok==True:
                     print("C ={} ----------------".format(c))
-                    for i in range(n - 1):
+                    for i in range(n):
                         self.data.ix[i]["数据"]+=c
                     break
             for i in range(n - 1):
@@ -98,9 +98,13 @@ class GrayForecast():
     def getLambda_k(self):
         return self.lambda_k
 
+    def getAnum(self):
+        return self.a
+
 #GM(1,1)建模
     def GM_11_build_model(self, forecast=5):
 
+        # print(self.forecast_list)
         if forecast > len(self.data):
             raise Exception('您的数据行不够')
         X_0 = np.array(self.forecast_list['数据'].tail(forecast))
@@ -121,11 +125,23 @@ class GrayForecast():
         a_ = (B.T * B) ** -1 * B.T * Yn
 
         a, b = np.array(a_.T)[0]
-
+        self.a = a
         X_ = np.zeros(X_0.shape[0])
         def f(k):
             return (X_0[0] - b / a) * (1 - np.exp(a)) * np.exp(-a * (k))
         self.forecast_list.loc[len(self.forecast_list)] = f(X_.shape[0])
+
+
+    def getCheck(self):
+        """
+        级比偏差值检验
+        :return:
+        """
+        lambda_k0 = (self.data.ix[0]["数据"]) / (self.data.ix[1]["数据"])
+        p_k = 1-((1-0.5*self.a)/(1+0.5*self.a))*lambda_k0
+
+        print("级比偏差值检验:{}".format(p_k))
+        return p_k
 
 #预测
     def forecast(self, time=5, forecast_data_len=5):

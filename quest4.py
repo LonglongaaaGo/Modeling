@@ -21,6 +21,7 @@ def quest4():
     lamba_k = gf.getLambda_k()
     # print("level_check_总数{}".format(lamba_k))
     gf.forecast(forsee_num)
+    gf.getCheck()
     # gf.log()
     # gf.plot()
     list_forSum = gf.getRes().values.tolist()
@@ -42,6 +43,7 @@ def quest4():
         lamba_k = gf.getLambda_k()
         # print("level_check_{}:{}".format(name[2+i],lamba_k))
         gf.forecast(forsee_num)
+        gf.getCheck()
         list_for_type.append(gf.getRes().values.tolist())
         list_for_orign.append(gf.getorign().values.tolist())
     # gf.log()
@@ -49,14 +51,7 @@ def quest4():
 
     ans = []
     startNum = 2014
-    # for i in range(6):
-    #     temp_ans = []
-    #     temp_ans.append(str(i+startNum))
-    #     temp_ans.append(int(list_forSum[i][0] - sum_c_num) )
-    #     temp_ans.append(int(list_for_type[0][i][0] - c_numList[0]))
-    #     temp_ans.append(int(list_for_type[1][i][0]-c_numList[1]))
-    #     temp_ans.append(int(list_for_type[2][i][0]-c_numList[2]))
-    #     ans.append(temp_ans)
+
     for i in range(5):
         temp_ans = []
         temp_ans.append(str(i + startNum))
@@ -70,13 +65,44 @@ def quest4():
         temp_ans = []
         temp_ans.append(str(i + startNum))
         temp_ans.append(int(list_forSum[i][0]))
-        temp_ans.append(int(list_for_type[0][i][0]))
-        temp_ans.append(int(list_for_type[1][i][0]))
-        temp_ans.append(int(list_for_type[2][i][0]))
+        temp_ans.append(int(list_for_type[0][i][0]-c_numList[0]))
+        temp_ans.append(int(list_for_type[1][i][0]-c_numList[1]))
+        temp_ans.append(int(list_for_type[2][i][0]-c_numList[2]))
         ans.append(temp_ans)
+
+    #
+    # for i in range(0, 5 + forsee_num):
+    #     temp_ans = []
+    #     temp_ans.append(str(i + startNum))
+    #     temp_ans.append(int(list_forSum[i][0]))
+    #     temp_ans.append(int(list_for_type[0][i][0]))
+    #     temp_ans.append(int(list_for_type[1][i][0]))
+    #     temp_ans.append(int(list_for_type[2][i][0]))
+    #     ans.append(temp_ans)
+
 
     Utils.Excelwriter(index_, colums_=name, list_main=ans, path=r'./quest4.xls')
 
+    return ans
+def quest4_2(ans_list):
+    """
+    相对残差检验
+    :return:打印相对残差检验值
+    """
+    print(ans_list)
+    out_list = []
+    for i in range(1, len(ans_list[0])):
+        temp_list = []
+        for j in range(1,len(ans_list)-1):
+            e_k = float(ans_list[j][i])/ans_list[j+1][i]
+            temp_list.append(e_k)
+        out_list.append(temp_list)
+
+    print(out_list)
+
+
+
 
 if __name__ == "__main__":
-    quest4()
+    ans_list = quest4()
+    # quest4_2(ans_list)
